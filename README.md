@@ -1,0 +1,2 @@
+<h1> Hello, This is my project for cubers that are also programmers </h1>
+A the moment, Terminal Timer works only on Windows with python 3.7+ and keyboard module installed. In the future I will add some features and more convenient way of installing it!
