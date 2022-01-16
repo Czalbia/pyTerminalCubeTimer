@@ -1,0 +1,13 @@
+{
+    "averages": {
+        "avg3": 0,
+        "avg5": 0,
+        "bavg3": 0,
+        "bavg5": 0
+    },
+    "best": 0,
+    "worst": 0,
+    "count": 0,
+    "times": {
+    }
+}
