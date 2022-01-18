@@ -40,9 +40,32 @@ while(True):
 
         for i in range(1,20):
             scramble[i]+=possiblitie[random.randint(0,1)]
-        calculateAvg()
+
         return scramble
 
+    def calculateAvg():
+        with open('data.json', 'r+') as f:
+            data = json.load(f)
+            count=data['count']
+            if count>=3:
+                data['averages']['avg3']=round((data['times'][str(count)]+data['times'][str(count-1)]+data['times'][str(count-2)])/3,3)
+            
+            if count>=5:
+                data['averages']['avg5']=round((data['times'][str(count)]+data['times'][str(count-1)]+data['times'][str(count-2)]+data['times'][str(count-3)]+data['times'][str(count-4)])/5,3)
+            
+            if data['averages']['bavg3']==0:
+                data['averages']['bavg3']=data['averages']['avg3']
+            if data['averages']['bavg5']==0:
+                data['averages']['bavg5']=data['averages']['avg5']
+             
+            if data['averages']['avg3']<data['averages']['bavg3']:
+                data['averages']['bavg3']=data['averages']['avg3']
+            if data['averages']['avg5']<data['averages']['bavg5']:
+                data['averages']['bavg5']=data['averages']['avg5']
+
+            f.seek(0)  
+            json.dump(data, f, indent=4)
+            f.truncate()
 
     def addTime():
         print("Press alt to start, space to end, esc to end the program")
@@ -74,6 +97,7 @@ while(True):
                         f.seek(0)  
                         json.dump(data, f, indent=4)
                         f.truncate()
+                    calculateAvg()
                     return 
         if keyboard.read_key()=='esc':
             exit()    
