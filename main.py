@@ -4,6 +4,7 @@ import random
 import keyboard
 import os
 
+
 color={
     "end": "\x1b[0m",
     "red": "\x1b[1;31;40m",
@@ -14,21 +15,32 @@ color={
 
 }
 while(True):
-    def scrambleTheCube():
-        notation=["F", "F2", "F'", "R", "R2", "R'", "U", "U2", "U'", "B", "B2", "B'", "L", "L2", "L'", "D", "D2", "D'"]
 
+    def toString(s): 
+        str1 = "" 
+        
+        for ele in s: 
+            str1 += " "+ele  
+        return str1 
+
+    
+    def scrambleTheCube():
+        side = ['U','D','F','B','R','L']
+        possiblitie=["'",'2']
         scramble=[]
-        scrambleWithoutAdditions=[]
-        for i in range(0,20):
-            randomNotation=random.randint(0,17)
-            scramble.append(notation[randomNotation])
-            scrambleWithoutAdditions.append(notation[randomNotation][0])
+        randomIndex=random.randint(0,5)
+        scramble.append(side[randomIndex])
+        i=0
         for i in range(1,20):
-            if scrambleWithoutAdditions[i] == scrambleWithoutAdditions[i-1]:
-                randomNotation=random.randint(0,17)
-                scrambleWithoutAdditions.insert(i,notation[randomNotation][0])
-                scramble.insert(i,notation[randomNotation])
-                i=1
+            ran=random.randint(0,5)
+            nextMove=side[ran]
+            scramble.append(nextMove)
+            while scramble[i]==scramble[i-1]:
+                scramble[i]=side[random.randint(0,5)]
+
+        for i in range(1,20):
+            scramble[i]+=possiblitie[random.randint(0,1)]
+        calculateAvg()
         return scramble
 
 
@@ -36,15 +48,29 @@ while(True):
         print("Press alt to start, space to end, esc to end the program")
         if keyboard.read_key()=="alt":
             startTime=time.time()
+
             while True:
+
                 if keyboard.read_key()=="space":
+
                     endTime=time.time()
                     yourTime=round(endTime - startTime,3)
                     print("Your time: ",yourTime)
+                    
                     with open('data.json', 'r+') as f:
                         data = json.load(f)
                         data["count"]+=1
-                        data["times"][str(data["count"])]=yourTime
+                        data["times"][data["count"]]=yourTime
+                        
+                        if data['best']==0:
+                            data['best']=yourTime
+                            
+                        elif yourTime<data['best']:
+                            data['best']=yourTime
+
+                        if yourTime>data['worst']:
+                            data['worst']=yourTime
+                        
                         f.seek(0)  
                         json.dump(data, f, indent=4)
                         f.truncate()
@@ -52,9 +78,10 @@ while(True):
         if keyboard.read_key()=='esc':
             exit()    
 
-            
+   
 
-    print(f'''\n[{ color["violet"] } scrmbl { color["end"] }]:{str(scrambleTheCube())}''')
+
+    print(f'''\n[{ color["violet"] } scrmbl { color["end"] }]:{toString(scrambleTheCube())}''')
 
 
     with open('data.json', 'r') as f:
