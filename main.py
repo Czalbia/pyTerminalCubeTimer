@@ -40,7 +40,10 @@ while(True):
 
         for i in range(1,20):
             scramble[i]+=possiblitie[random.randint(0,1)]
+<<<<<<< HEAD
 
+=======
+>>>>>>> 82d669185b184f53ef9b03ffb33016d9caf0361e
         return scramble
 
     def calculateAvg():
