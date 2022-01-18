@@ -40,7 +40,6 @@ while(True):
 
         for i in range(1,20):
             scramble[i]+=possiblitie[random.randint(0,1)]
-        calculateAvg()
         return scramble
 
 
