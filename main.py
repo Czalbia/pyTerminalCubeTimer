@@ -4,24 +4,30 @@ import random
 import keyboard
 import os
 
-
 color = {
     "end": "\x1b[0m",
     "red": "\x1b[1;31;40m",
     "green": "\x1b[1;32;40m",
     "yellow": "\x1b[1;33;40m",
     "blue": "\x1b[1;34;40m",
-    "violet": "\x1b[1;35;40m"
+    "violet": "\x1b[1;35;40m",
+    "cyan": "\x1b[1;36;40m"
 
 }
 
+def helpMenu():
+    print(f'''
+[{ color['cyan'] } KeyMap { color['end'] }]
 
-def toString(s):
-    str1 = ""
-
-    for ele in s:
-        str1 += " "+ele
-    return str1
+r - remove a selected solution
+2 - add two seconds to a last solution
+alt - start a time measurment
+space - end a time measurment
+h - display this menu
+esc - quit 
+    ''')
+    return 
+helpMenu()
 
 
 def scrambleTheCube():
@@ -74,21 +80,39 @@ def remove():
     with open('data.json', 'r+') as f:
         data = json.load(f)
         for i in data['times']:
-            print(i,"  ",data['times'][i])
-        
+            print(i, "  ", data['times'][i])
+
         print('Which solution is going out:')
-        index=int(input())
-        
+        index = int(keyboard.read_key())
+        data['best'] = 1000000
+        data['worst'] = 0 
+        for i in range(index, int(data['count'])):
+            data['times'][str(i)] = data['times'][str(i+1)]
+
         del data['times'][str(data['count'])]
-        data['count']-=1
+
+        data['count'] -= 1
+        for i in range(1,int(data['count']+1)):
+            if data['times'][str(i)]< data['best']:
+                data['best']=data['times'][str(i)]
+            elif data['times'][str(i)]> data['worst']:
+                data['worst']=data['times'][str(i)]
+        
+        data['averages']['bavg3'] = 0
+        data['averages']['avg3'] = 0
+        data['averages']['bavg5'] = 0
+        data['averages']['avg5'] = 0
+        
+
         f.seek(0)
         json.dump(data, f, indent=4)
         f.truncate()
+        calculateAvg()
 
-def addTime():    
-    if keyboard.read_key() == "space":
+
+def addTime():
+    if keyboard.read_key() == "alt":
         startTime = time.time()
-        time.sleep(2)
         while True:
 
             if keyboard.read_key() == "space":
@@ -119,15 +143,18 @@ def addTime():
     if keyboard.read_key() == 'r':
         remove()
         return
-
+    if keyboard.read_key()=='h':
+        helpMenu()
+        return
     if keyboard.read_key() == 'esc':
         exit()
+
 
 def main():
     while(True):
 
         print(
-            f'''\n[{ color["violet"] } scrmbl { color["end"] }]:{toString(scrambleTheCube())}''')
+            f'''\n[{ color["violet"] } scrmbl { color["end"] }]: {' '.join(scrambleTheCube())}''')
 
         with open('data.json', 'r') as f:
             data = json.load(f)
@@ -142,19 +169,11 @@ def main():
             print(
                 f"[{ color['blue'] } bavg5 { color['end'] }]  {data['averages']['bavg5']}")
             print(f"[{ color['blue'] } count { color['end'] }]  {data['count']}")
-        print('''
-    Key map:
-    
-    r - remove a selected solution
-    2 - add two seconds to a last solution
-    space - start and end a time measurment
-    h - see this menu
-    esc - quit 
-        ''')
-        
         addTime()
-        time.sleep(2)
+        time.sleep(3)
         os.system("cls")
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
+    
     main()
